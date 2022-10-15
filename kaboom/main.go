@@ -52,6 +52,7 @@ func imageMain() error {
 		return err
 	}
 
+	// skipcq: GO-S2307
 	defer f.Close()
 	err = png.Encode(f, img)
 	if err != nil {
