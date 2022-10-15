@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	width  = 1500
-	height = 1500
+	width  = 1504
+	height = 1504
 	fov    = math.Pi / 3
 )
 
@@ -81,9 +81,9 @@ func animationMain() error {
 
 	lastFrameTime := time.Now()
 	for i := 0; i < numFrames; i++ {
-		lastFrameTime = time.Now()
 		fmt.Printf("\rFrame: %d | Last frame time: %v", i+1, time.Since(lastFrameTime))
 
+		lastFrameTime = time.Now()
 		render(numPartitions, img)
 
 		f, err := os.Create(fmt.Sprintf("./out/%d.png", i+1))
