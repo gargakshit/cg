@@ -21,9 +21,11 @@ func lerp(f0, f1 float64, fac float64) float64 {
 }
 
 func lerpVec(f0, f1 r3.Vec, fac float64) r3.Vec {
+	f := clamp(0, 1, fac)
+
 	return r3.Vec{
-		X: lerp(f0.X, f1.X, fac),
-		Y: lerp(f0.Y, f1.Y, fac),
-		Z: lerp(f0.Z, f1.Z, fac),
+		X: f0.X + (f1.X-f0.X)*clamp(0, 1, f),
+		Y: f0.Y + (f1.Y-f0.Y)*clamp(0, 1, f),
+		Z: f0.Z + (f1.Z-f0.Z)*clamp(0, 1, f),
 	}
 }

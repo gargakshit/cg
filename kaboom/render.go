@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"image"
 	"math"
-	"runtime"
 	"sync"
 
 	"gonum.org/v1/gonum/spatial/r3"
@@ -65,8 +63,9 @@ func fractalBrownianMotion(v r3.Vec) float64 {
 }
 
 func signedDistance(p r3.Vec) float64 {
+	rad := sphereRadius * (math.Sin((frameTime-2.0)/4) + 0.5)
 	displacement := -fractalBrownianMotion(r3.Scale(3.4, p)) * noiseAmplitude
-	return r3.Norm(p) - (sphereRadius + displacement)
+	return r3.Norm(p) - (rad + displacement)
 }
 
 const eps = 0.1
@@ -83,11 +82,6 @@ func distanceFieldNormal(pos r3.Vec) r3.Vec {
 
 func sphereTrace(origin, direction r3.Vec) (bool, r3.Vec) {
 	pos := origin
-
-	if vec3XYZ(vec3Mul(origin, origin))-math.Pow(vec3XYZ(vec3Mul(origin, direction)), 2) >
-		sphereRadius*sphereRadius {
-		return false, pos
-	}
 
 	for i := 0; i < 128; i++ {
 		d := signedDistance(pos)
@@ -127,25 +121,26 @@ func paletteFire(d float64) r3.Vec {
 	return lerpVec(orange, yellow, x*4-3)
 }
 
-func render(img *image.RGBA) {
-	numPartitions := runtime.GOMAXPROCS(0)
+func render(numPartitions int, img *image.RGBA) {
 	partitionSize := height / numPartitions
-
-	fmt.Println("Running in parallel with", numPartitions, "partitions")
 
 	var wg sync.WaitGroup
 	wg.Add(numPartitions)
 
 	for i := 0; i < numPartitions; i++ {
-		go renderPartition(&wg, i, partitionSize, img)
+		go renderPartition(&wg, i*partitionSize, (i+1)*partitionSize, img)
+	}
+
+	if numPartitions*partitionSize < height {
+		wg.Add(1)
+		go renderPartition(&wg, numPartitions*partitionSize, height, img)
 	}
 
 	wg.Wait()
 }
 
-func renderPartition(wg *sync.WaitGroup, i, size int, img *image.RGBA) {
-	base := i * size
-	for y := base; y < base+size; y++ {
+func renderPartition(wg *sync.WaitGroup, lower, upper int, img *image.RGBA) {
+	for y := lower; y < upper; y++ {
 		for x := 0; x < width; x++ {
 			renderPixel(x, y, img)
 		}
