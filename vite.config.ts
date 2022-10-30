@@ -12,6 +12,7 @@ export default defineConfig({
         main: resolve(__dirname, "index.html"),
         "mandelbrot-webgl": resolve(__dirname, "mandelbrot-webgl/index.html"),
         "kaboom-webgl": resolve(__dirname, "kaboom-webgl/index.html"),
+        fbm: resolve(__dirname, "./fbm/index.html"),
       },
     },
   },
