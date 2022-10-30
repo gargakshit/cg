@@ -44,9 +44,9 @@ const maxIterationsUniform = gl.getUniformLocation(
 );
 const resolutionUniform = gl.getUniformLocation(glProgram, "u_resolution");
 
+const maxIters = 512;
 const zoomCenter = [0.0, 0.0];
-const zoomSize = 4.0;
-const maxIters = 500;
+let zoomSize = 4.0;
 
 gl.viewport(0, 0, canvas.width, canvas.height);
 
@@ -63,5 +63,43 @@ function render() {
   // requestAnimationFrame(render);
 }
 
-render();
-// requestAnimationFrame(render);
+canvas.addEventListener("wheel", (e) => {
+  const scaleDelta = e.deltaY * 0.001;
+  if (scaleDelta < 0) {
+    zoomSize *= 0.99 + scaleDelta;
+  } else {
+    zoomSize *= 1.01 + scaleDelta;
+  }
+
+  requestAnimationFrame(render);
+});
+
+let shouldPan = false;
+const panStart = [0, 0];
+const oldZoomCenter = [zoomCenter[0], zoomCenter[1]];
+
+canvas.addEventListener("mousedown", (e) => {
+  shouldPan = true;
+  panStart[0] = e.clientX;
+  panStart[1] = e.clientY;
+  oldZoomCenter[0] = zoomCenter[0];
+  oldZoomCenter[1] = zoomCenter[1];
+});
+
+canvas.addEventListener("mouseup", (_) => {
+  shouldPan = false;
+});
+
+canvas.addEventListener("mousemove", (e) => {
+  if (shouldPan) {
+    const x = panStart[0] - e.clientX;
+    const y = e.clientY - panStart[1];
+
+    zoomCenter[0] = oldZoomCenter[0] + x * zoomSize * 0.00116;
+    zoomCenter[1] = oldZoomCenter[1] + y * zoomSize * 0.00116;
+
+    requestAnimationFrame(render);
+  }
+});
+
+requestAnimationFrame(render);
