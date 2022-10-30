@@ -8,5 +8,8 @@ body {
   align-items: center;
   justify-content: center;
 
-  background-color: black;
+  background-color: #181818;
+  color: white;
+
+  font-family: system-ui, sans-serif;
 }

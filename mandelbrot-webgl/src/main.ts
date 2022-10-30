@@ -1,4 +1,4 @@
-import "./style.css";
+import "../../style.css";
 
 import vertShaderSrc from "./shaders/vert.glsl?raw";
 import fragShaderSrc from "./shaders/frag.glsl?raw";
