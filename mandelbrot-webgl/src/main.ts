@@ -6,6 +6,13 @@ import fragShaderSrc from "./shaders/frag.glsl?raw";
 const canvas = document.querySelector("#view")! as HTMLCanvasElement;
 const gl = canvas.getContext("webgl2")!;
 
+const side =
+  window.innerHeight > window.innerWidth
+    ? window.innerWidth
+    : window.innerHeight;
+canvas.width = side;
+canvas.height = side;
+
 const vertShader = gl.createShader(gl.VERTEX_SHADER)!;
 gl.shaderSource(vertShader, vertShaderSrc);
 gl.compileShader(vertShader);
@@ -100,6 +107,10 @@ canvas.addEventListener("mousemove", (e) => {
 
     requestAnimationFrame(render);
   }
+});
+
+canvas.addEventListener("mouseleave", (_) => {
+  shouldPan = false;
 });
 
 requestAnimationFrame(render);
