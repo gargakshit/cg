@@ -71,6 +71,8 @@ function render() {
 }
 
 canvas.addEventListener("wheel", (e) => {
+  e.preventDefault();
+
   const scaleDelta = e.deltaY * 0.001;
   if (scaleDelta < 0) {
     zoomSize *= 0.99 + scaleDelta;
